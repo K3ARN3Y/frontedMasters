@@ -1,0 +1,26 @@
+# version of Docker Compose to use
+version: "3"
+# Containers are services
+services:
+  # web is a name we are assigning it here
+  web:
+    # build tells where it's docker file is
+    build: .
+    # what ports do you care about
+    ports:
+      - "3000:3000"
+    volumes:
+      # this is bind mount of the code you are running locally to the container
+      - .:/home/node/code
+      # this is actually saying don't bring over node_modules
+      - /home/node/code/node_modules
+    links:
+      # this links containers but can also be thought of as dependencies.
+      # web is dependent on db. Docker Compose will see this so it will build db before web
+      - db
+    # environment variable of where to go
+    environment:
+      MONGO_CONNECTION_STRING: mongodb://db:27017
+  db:
+    # This just grabs the mongo:3 image from Docker Hub
+    image: mongo:3
